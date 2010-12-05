@@ -2,7 +2,8 @@ use Test::More;
 use Devel::Valgrind::Client qw(is_in_memcheck leak_check);
 
 if(!is_in_memcheck()) {
-  exec "valgrind", "${^X}", "-Mblib", __FILE__;
+  no warnings;
+  exec "valgrind", "--log-file=delete-me.log", "${^X}", "-Mblib", __FILE__;
   plan skip_all => "Valgrind not found";
 }
 
@@ -16,3 +17,4 @@ my $leaks = leak_check {
 ok $leaks->{dubious} >= 1_000_000;
 
 done_testing;
+unlink "delete-me.log";
